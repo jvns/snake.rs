@@ -105,11 +105,7 @@ impl Board {
 
 }
 
-
-
-
-
-
+// some functions to make ncurses work
 
 fn display_points(snake: &Vec<Point>, symbol: chtype) {
   for point in snake {
