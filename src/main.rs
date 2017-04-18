@@ -11,8 +11,8 @@ enum Direction { UP, DOWN, LEFT, RIGHT }
 
 #[derive(Clone, Copy, PartialEq)]
 struct Point {
-  x: i32,
-  y: i32
+  x: u32,
+  y: u32
 }
 
 struct Board {
@@ -38,9 +38,10 @@ impl Board {
   }
 
   fn create_random_cell(&self) -> Point {
-    let xrand = rand::random::<u32>();
-    let yrand = rand::random::<u32>();
-    return Point{x: (xrand % self.xmax) as i32, y: (yrand % self.ymax) as i32};
+    return Point {
+      x: rand::random::<u32>()% self.xmax, 
+      y: rand::random::<u32>()% self.ymax
+    };
   }
 
   fn initialize(&mut self) {
@@ -80,8 +81,8 @@ impl Board {
 
   fn next_move(&self, dir: Direction) -> Result<Point, ()> {
     let head = &self.snake[0];
-    let mut new_x = head.x;
-    let mut new_y = head.y;
+    let mut new_x = head.x as i32;
+    let mut new_y = head.y as i32;
     match dir {
       Direction::UP => {
         new_y -= 1;
@@ -99,7 +100,7 @@ impl Board {
     if new_x < 0 || new_y < 0 || new_x >= self.xmax as i32 || new_y >= self.ymax as i32 {
       return Err(());
     } else {
-      return Ok(Point{x: new_x, y: new_y});
+      return Ok(Point{x: new_x as u32, y: new_y as u32});
     }
   }
 
@@ -109,7 +110,7 @@ impl Board {
 
 fn display_points(snake: &Vec<Point>, symbol: chtype) {
   for point in snake {
-    mvaddch(point.y, point.x, symbol);
+    mvaddch(point.y as i32, point.x as i32, symbol);
   }
 }
 
