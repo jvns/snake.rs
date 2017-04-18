@@ -1,4 +1,3 @@
-use std::io;
 extern crate rand;
 extern crate ncurses;
 use ncurses::*;
@@ -149,11 +148,11 @@ fn main() {
   let mut board = Board{xmax: xmax as u32, ymax: ymax as u32, foods: vec!(), snake: vec!()};
   board.initialize_snake();
 
-  for i in 1..6 {
+  for _ in 1..6 {
     board.add_new_food();
   }
 
-  while true {
+  loop {
     clear();
     display_points(&board.snake, ACS_BLOCK());
     display_points(&board.foods, ACS_DIAMOND());
