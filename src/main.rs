@@ -3,10 +3,11 @@ extern crate rand;
 extern crate ncurses;
 use ncurses::*;
 
+
 #[derive(PartialEq)]
 enum Status { SUCCESS, FAILURE }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 enum Direction { UP, DOWN, LEFT, RIGHT }
 
 #[derive(Clone, Copy, PartialEq)]
@@ -143,7 +144,7 @@ fn main() {
   let mut xmax: i32 = 0;
   let mut ymax: i32 = 0;
   getmaxyx(stdscr(), &mut ymax, &mut xmax);
-  let dir = Direction::RIGHT;
+  let mut dir = Direction::RIGHT;
 
   let mut board = Board{xmax: xmax as u32, ymax: ymax as u32, foods: vec!(), snake: vec!()};
   board.initialize_snake();
@@ -157,7 +158,7 @@ fn main() {
     display_points(&board.snake, ACS_BLOCK());
     display_points(&board.foods, ACS_DIAMOND());
     refresh();
-    let dir = get_next_move(dir.clone());
+    dir = get_next_move(dir.clone());
     let status = move_snake(&mut board, dir);
     if  status == Status::FAILURE{
       break
