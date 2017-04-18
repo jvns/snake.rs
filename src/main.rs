@@ -117,11 +117,16 @@ fn display_points(snake: &[Point], symbol: chtype) {
 
 fn get_next_move(previous: Direction) -> Direction {
   let ch = getch();
-  match ch {
-    KEY_LEFT => Direction::LEFT,
-    KEY_RIGHT => Direction::RIGHT,
-    KEY_DOWN => Direction::DOWN,
-    KEY_UP => Direction::UP,
+  match (ch, previous) {
+    // don't let people turn 180 degrees, it doesn't make sense
+    (KEY_LEFT, Direction::RIGHT) => previous,
+    (KEY_RIGHT, Direction::LEFT) => previous,
+    (KEY_UP, Direction::DOWN) => previous,
+    (KEY_DOWN, Direction::UP) => previous,
+    (KEY_RIGHT, _) => Direction::RIGHT,
+    (KEY_LEFT, _) => Direction::LEFT,
+    (KEY_DOWN, _) => Direction::DOWN,
+    (KEY_UP, _) => Direction::UP,
     _ => previous
   }
 }
