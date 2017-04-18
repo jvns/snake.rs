@@ -38,10 +38,10 @@ impl Board {
   }
 
   fn create_random_cell(&self) -> Point {
-    return Point {
+    Point {
       x: rand::random::<u32>()% self.xmax, 
       y: rand::random::<u32>()% self.ymax
-    };
+    }
   }
 
   fn initialize(&mut self) {
@@ -56,10 +56,7 @@ impl Board {
 
   fn move_snake(&mut self, dir: Direction) -> Status {
     let beginning = self.next_move(dir);
-    match beginning {
-      Err(_) => {return Status::FAILURE}
-      Ok(_) => {}
-    }
+    if beginning.is_err() { return Status::FAILURE }
     let point: Point = beginning.unwrap();
     // if we're going backwards, ignore and move on
     if self.snake[1] == point {
@@ -76,7 +73,7 @@ impl Board {
      return Status::SUCCESS;
     }
     self.move_to(point);
-    return Status::SUCCESS;
+    Status::SUCCESS
   }
 
   fn next_move(&self, dir: Direction) -> Result<Point, ()> {
@@ -98,9 +95,9 @@ impl Board {
       }
     }
     if new_x < 0 || new_y < 0 || new_x >= self.xmax as i32 || new_y >= self.ymax as i32 {
-      return Err(());
+      Err(())
     } else {
-      return Ok(Point{x: new_x as u32, y: new_y as u32});
+      Ok(Point{x: new_x as u32, y: new_y as u32})
     }
   }
 
@@ -108,7 +105,7 @@ impl Board {
 
 // some functions to make ncurses work
 
-fn display_points(snake: &Vec<Point>, symbol: chtype) {
+fn display_points(snake: &[Point], symbol: chtype) {
   for point in snake {
     mvaddch(point.y as i32, point.x as i32, symbol);
   }
@@ -117,21 +114,12 @@ fn display_points(snake: &Vec<Point>, symbol: chtype) {
 fn get_next_move(previous: Direction) -> Direction {
   let ch = getch();
   match ch {
-    KEY_LEFT => {
-      return Direction::LEFT;
-    }
-    KEY_RIGHT => {
-      return Direction::RIGHT;
-    } 
-    KEY_DOWN => {
-      return Direction::DOWN;
-    }
-    KEY_UP => {
-      return Direction::UP;
-    }
-    _ => {}
+    KEY_LEFT => Direction::LEFT,
+    KEY_RIGHT => Direction::RIGHT,
+    KEY_DOWN => Direction::DOWN,
+    KEY_UP => Direction::UP,
+    _ => previous
   }
-  return previous;
 }
 
 
@@ -158,7 +146,7 @@ fn main() {
     display_points(&board.snake, ACS_BLOCK());
     display_points(&board.foods, ACS_DIAMOND());
     refresh();
-    dir = get_next_move(dir.clone());
+    dir = get_next_move(dir);
     status = board.move_snake(dir);
   }
   endwin();
