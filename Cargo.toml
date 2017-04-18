@@ -5,3 +5,4 @@ authors = ["Julia Evans <julia@jvns.ca>"]
 
 [dependencies]
 rand = "0.3"
+ncurses = "5.85.0"

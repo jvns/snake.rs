@@ -1,7 +1,12 @@
 use std::io;
 extern crate rand;
+extern crate ncurses;
+use ncurses::*;
 
+#[derive(PartialEq)]
 enum Status { SUCCESS, FAILURE }
+
+#[derive(Clone, Copy)]
 enum Direction { UP, DOWN, LEFT, RIGHT }
 
 #[derive(PartialEq)]
@@ -36,6 +41,11 @@ impl Board {
     let xrand = rand::random::<u32>();
     let yrand = rand::random::<u32>();
     return Point{x: (xrand % self.xmax) as i32, y: (yrand % self.ymax) as i32};
+  }
+
+  fn initialize_snake(&mut self) {
+    self.snake.push(Point{x: 2, y: 3});
+    self.snake.push(Point{x: 2, y: 2});
   }
 }
 
@@ -86,7 +96,7 @@ fn move_snake(board: &mut Board, dir: Direction) -> Status {
    if board.foods.contains(&point) {
     board.eat_food(point);
 //     remove_from_list(beginning, &(board->foods));
-//     add_new_food(board);
+    board.add_new_food();
     return Status::SUCCESS;
    }
    board.move_to(point);
@@ -94,6 +104,63 @@ fn move_snake(board: &mut Board, dir: Direction) -> Status {
 }
 
 
+fn display_points(snake: &Vec<Point>, symbol: chtype) {
+  for point in snake {
+    mvaddch(point.y, point.x, symbol);
+  }
+}
+
+fn get_next_move(previous: Direction) -> Direction {
+  let ch = getch();
+  match ch {
+    KEY_LEFT => {
+      return Direction::LEFT;
+    }
+    KEY_RIGHT => {
+      return Direction::RIGHT;
+    } 
+    KEY_DOWN => {
+      return Direction::DOWN;
+    }
+    KEY_UP => {
+      return Direction::UP;
+    }
+    _ => {}
+  }
+  return previous;
+}
+
+
 fn main() {
-    println!("Guess the number!");
+  initscr();
+  cbreak();
+  noecho();
+  keypad(stdscr(), true); // make keys work
+  // curs_set(0); // hide cursor
+  timeout(100);
+
+  let mut xmax: i32 = 0;
+  let mut ymax: i32 = 0;
+  getmaxyx(stdscr(), &mut ymax, &mut xmax);
+  let dir = Direction::RIGHT;
+
+  let mut board = Board{xmax: xmax as u32, ymax: ymax as u32, foods: vec!(), snake: vec!()};
+  board.initialize_snake();
+
+  for i in 1..6 {
+    board.add_new_food();
+  }
+
+  while true {
+    clear();
+    display_points(&board.snake, ACS_BLOCK());
+    display_points(&board.foods, ACS_DIAMOND());
+    refresh();
+    let dir = get_next_move(dir.clone());
+    let status = move_snake(&mut board, dir);
+    if  status == Status::FAILURE{
+      break
+    }
+  }
+  endwin();
 }
