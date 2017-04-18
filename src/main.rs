@@ -148,7 +148,7 @@ fn main() {
   let mut board = Board{xmax: xmax as u32, ymax: ymax as u32, foods: vec!(), snake: vec!()};
   board.initialize_snake();
 
-  for _ in 1..6 {
+  for _ in 1..15 {
     board.add_new_food();
   }
 
