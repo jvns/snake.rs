@@ -33,7 +33,11 @@ impl Board {
   }
 
   fn add_new_food(&mut self) {
-    let point = self.create_random_cell();
+    // don't spawn new food inside the snake
+    let mut point = self.create_random_cell();
+    while self.snake.contains(&point) || self.foods.contains(&point) {
+      point = self.create_random_cell();
+    }
     self.foods.push(point);
   }
 
