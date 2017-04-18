@@ -1,5 +1,5 @@
 [package]
-name = "guessing_game"
+name = "snake"
 version = "0.1.0"
 authors = ["Julia Evans <julia@jvns.ca>"]
 
