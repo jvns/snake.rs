@@ -151,16 +151,15 @@ fn main() {
   let mut board = Board{xmax: xmax as u32, ymax: ymax as u32, foods: vec!(), snake: vec!()};
   board.initialize();
 
-  loop {
+  let mut status = Status::SUCCESS;
+
+  while status == Status::SUCCESS {
     clear();
     display_points(&board.snake, ACS_BLOCK());
     display_points(&board.foods, ACS_DIAMOND());
     refresh();
     dir = get_next_move(dir.clone());
-    let status = board.move_snake(dir);
-    if  status == Status::FAILURE{
-      break
-    }
+    status = board.move_snake(dir);
   }
   endwin();
 }
