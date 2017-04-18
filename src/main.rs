@@ -1,4 +1,5 @@
 use std::io;
+extern crate rand;
 
 enum Status { SUCCESS, FAILURE }
 enum Direction { UP, DOWN, LEFT, RIGHT }
@@ -25,7 +26,20 @@ impl Board {
     self.snake.insert(0, point);
     self.snake.pop();
   }
+
+  fn add_new_food(&mut self) {
+    let point = self.create_random_cell();
+    self.foods.push(point);
+  }
+
+  fn create_random_cell(&self) -> Point {
+    let xrand = rand::random::<u32>();
+    let yrand = rand::random::<u32>();
+    return Point{x: (xrand % self.xmax) as i32, y: (yrand % self.ymax) as i32};
+  }
 }
+
+
 
 fn next_move(board: &Board, dir: Direction) -> Result<Point, ()> {
   let snake = &board.snake;
@@ -56,7 +70,7 @@ fn next_move(board: &Board, dir: Direction) -> Result<Point, ()> {
 fn move_snake(board: &mut Board, dir: Direction) -> Status {
    let beginning = next_move(board, dir);
    match beginning {
-     Err(e) => {return Status::FAILURE}
+     Err(_) => {return Status::FAILURE}
      Ok(_) => {}
    }
    let point: Point = beginning.unwrap();
@@ -75,29 +89,8 @@ fn move_snake(board: &mut Board, dir: Direction) -> Status {
 //     add_new_food(board);
     return Status::SUCCESS;
    }
+   board.move_to(point);
    return Status::SUCCESS;
-//   // Check for food
-//   if (list_contains(beginning, board->foods)) {
-//     // Attach the beginning to the rest of the snake;
-//     beginning->next = board->snake;
-// 
-//     return SUCCESS;
-//   }
-// 
-//   // Attach the beginning to the rest of the snake
-//   beginning->next = board->snake;
-//   board->snake = beginning;
-// 
-// 
-//   // Cut off the end
-//   PointList* end = board->snake;
-//   while(end->next->next) {
-//     end = end->next;
-//   }
-//   free(end->next);
-//   end->next = NULL;
-// 
-//   return SUCCESS;
 }
 
 
