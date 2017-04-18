@@ -9,7 +9,7 @@ enum Status { SUCCESS, FAILURE }
 #[derive(Clone, Copy)]
 enum Direction { UP, DOWN, LEFT, RIGHT }
 
-#[derive(PartialEq)]
+#[derive(Clone, Copy, PartialEq)]
 struct Point {
   x: i32,
   y: i32
@@ -96,6 +96,7 @@ fn move_snake(board: &mut Board, dir: Direction) -> Status {
    if board.foods.contains(&point) {
     board.eat_food(point);
 //     remove_from_list(beginning, &(board->foods));
+    board.foods.retain(|&x| x != point);
     board.add_new_food();
     return Status::SUCCESS;
    }
@@ -136,7 +137,7 @@ fn main() {
   cbreak();
   noecho();
   keypad(stdscr(), true); // make keys work
-  // curs_set(0); // hide cursor
+  curs_set(CURSOR_VISIBILITY::CURSOR_INVISIBLE); // hide cursor
   timeout(100);
 
   let mut xmax: i32 = 0;
